@@ -1,7 +1,5 @@
 音声認識用サーバ構築
 
-西村良太
-
 ----------------------------
 # Ubuntuインストール
 ## Ubuntu14.04日本語版
@@ -128,7 +126,7 @@ http://www.cherrypy.org/
 
 ## CherryPyのインストール
 ```
-cd ~/Downloads
+$ cd ~/Downloads
 $ wget https://pypi.python.org/packages/source/C/CherryPy/CherryPy-3.8.1.tar.gz#md5=919301731c9835cf7941f8bdc1aee9aa
 $ tar zxvf CherryPy-3.8.1.tar.gz
 $ cd CherryPy-3.8.1
@@ -193,28 +191,20 @@ $ python ./ASRServer.py
 		- （待たないと，ファイル内容が無いうちに，中身0なファイルを出力して処理が完了してしまう）		
 
 ## クライアントからの使い方
-●●POSTで外部から叩く
-●●WAVEファイルを送りつける
-●●クライアントのソースを貼る
+waveデータを，サーバに対してPOST送信すれば良い．Pythonでは，requestsライブラリを用いると簡単にPOST送信できる．requestsが入っていない場合には，以下のようにして入れると良い．
 
-
-----------------------------
-# Python Webサーバ（CGI）
-## cgi起動用Pythonスクリプト起動
-
-`./cgiserver.py`に以下の内容を入れる．
-```Python
-#!/usr/bin/env python
-
-import CGIHTTPServer
-CGIHTTPServer.test()
 ```
-実行権限を与えて実行
+$ pip install requests
 ```
-$ chmod +x ./cgiserver.py
-$ ./cgiserver.py
-```
-実行したディレクトリをホームとした，webサーバが立ち上がる．
 
-## テスト接続
-http://nishimura-asr.local:8000/
+requestsを用いたPOST送信の方法は以下のとおり．`url`と`files`の中のwavファイル名は，各自書き換えること．
+```python
+import requests
+url = "http://nishimura-asr.local:8000/asr_julius"
+files = {
+	'myFile': open('test_16000.wav', 'rb')
+}
+s = requests.Session()
+r = s.post(url, files=files)
+print r.text
+```
